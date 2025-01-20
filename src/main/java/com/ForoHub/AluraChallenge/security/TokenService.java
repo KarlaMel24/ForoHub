@@ -1,4 +1,4 @@
-/*package com.ForoHub.AluraChallenge.security;
+package com.ForoHub.AluraChallenge.security;
 
 import com.ForoHub.AluraChallenge.model.Usuario;
 import com.auth0.jwt.JWT;
@@ -33,24 +33,54 @@ public class TokenService {
         }
     }
 
+    private Instant generarFechaExpiracion() {
+        return LocalDateTime.now().plusHours(200).toInstant(ZoneOffset.of("-06:00"));
+    }
+
     public String getSubject(String token) {
+        if (token == null) {
+            throw new IllegalArgumentException("El token no puede ser nulo");
+        }
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(apiSecret);
+            return JWT.require(algorithm)
+                    .withIssuer("Foro HUB")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (JWTVerificationException exception) {
+            throw new RuntimeException("Token inválido", exception);
+        }
+    }
+}
+
+    /*public String getSubject(String token) {
         if (token == null) {
             throw new RuntimeException("El token no puede ser nulo");
         }
-        DecodedJWT verifier;
+        //Vamos a añadir temporalmente un null
+        DecodedJWT verifier = null;
         try {
             Algorithm algorithm = Algorithm.HMAC256(apiSecret);  // Validando la firma
             verifier = JWT.require(algorithm)
                     .withIssuer("Foro HUB")
                     .build()
                     .verify(token);  // Verifica la validez del token
-            return verifier.getSubject();  // Obtiene el 'subject' (usuario)
+            //Vamos a quitar temporalmente el return
+            /* return verifier.getSubject();  // Obtiene el 'subject' (usuario)
         } catch (JWTVerificationException exception) {
             throw new RuntimeException("Token inválido", exception);
         }
+    }*/
+            /*verifier.getSubject();
+        } catch (JWTVerificationException exception) {
+            System.out.println(exception.toString());
+        }
+        if (verifier.getSubject() == null) {
+            throw new RuntimeException("Verifier invalido");
+        }
+        return verifier.getSubject();
     }
 
-    private Instant generarFechaExpiracion() {
-        return LocalDateTime.now().plusHours(200).toInstant(ZoneOffset.of("-03:00"));
-    }
-}*/
+
+    }*/

@@ -78,9 +78,10 @@ public class Usuario implements UserDetails {
         this.topics = topics;
     }
 
+    // Cambiamos el "" por contrasena
     @Override
     public String getPassword() {
-        return "";
+        return contrasena;
     }
 
     @Override

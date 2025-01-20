@@ -1,4 +1,4 @@
-/*package com.ForoHub.AluraChallenge.controller;
+package com.ForoHub.AluraChallenge.controller;
 
 
 import com.ForoHub.AluraChallenge.model.LoginRequest;
@@ -32,8 +32,28 @@ public class AutenticacionController {
     @Autowired
     private TokenService tokenService;
 
+    // Código que estamos usando
+    /*@PostMapping
+    public ResponseEntity autenticarUsuario(@RequestBody @Valid LoginRequest loginRequest) {
+        Authentication authToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getContrasena());
+        Authentication datosAutenticados = authenticationManager.authenticate(authToken);
+        String JWTtoken = tokenService.generarToken((Usuario) datosAutenticados.getPrincipal());
+        return ResponseEntity.ok(new JwtData(JWTtoken));
+    }*/
+
+    //Código que vamos a probar de Api-Med
+    @PostMapping
+    public ResponseEntity autenticarUsuario(@RequestBody @Valid LoginRequest loginRequest) {
+        Authentication authToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getContrasena());
+        var usuarioAutenticado = authenticationManager.authenticate(authToken);
+        var JWTtoken = tokenService.generarToken((Usuario) usuarioAutenticado.getPrincipal());
+        return ResponseEntity.ok(new JwtData(JWTtoken));
+    }
+
+}
+
 //Probar este código
-@PostMapping
+/*@PostMapping
     public ResponseEntity autenticarUsuario(@RequestBody @Valid DatosAutenticacionUsuario datosAutenticacionUsuario){
         Authentication authToken = new UsernamePasswordAuthenticationToken(datosAutenticacionUsuario.login(), datosAutenticacionUsuario.clave());
        var datosAutenticados = authenticationManager.authenticate(authToken);
@@ -41,7 +61,7 @@ public class AutenticacionController {
         return ResponseEntity.ok(new DatosJWTToken(JWTtoken));
     }
 
- */
+ }*/
     /*@PostMapping
     public ResponseEntity<JwtData> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {

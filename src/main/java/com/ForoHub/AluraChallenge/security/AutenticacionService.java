@@ -3,6 +3,68 @@ package com.ForoHub.AluraChallenge.security;
 import com.ForoHub.AluraChallenge.model.Usuario;
 import com.ForoHub.AluraChallenge.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AutenticacionService implements UserDetailsService {
+
+    private UsuarioRepository usuarioRepository;
+
+    public AutenticacionService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return usuarioRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+    }
+}
+
+
+/*@Service
+public class AutenticacionService {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public UsernamePasswordAuthenticationToken autenticar(String email, String contrasena) {
+        // Buscar el usuario por email
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new BadCredentialsException("Email o contraseña incorrectos"));
+
+        // Verificar la contraseña
+        if (!passwordEncoder.matches(contrasena, usuario.getContrasena())) {
+            throw new BadCredentialsException("Email o contraseña incorrectos");
+        }
+
+        // Si la contraseña es correcta, crear un token de autenticación
+        UserDetails userDetails = User.builder()
+                .username(usuario.getEmail())
+                .password(usuario.getContrasena())
+                .roles("USER") // Asegúrate de asignar roles adecuados aquí
+                .build();
+
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+}*/
+
+
+/*package com.ForoHub.AluraChallenge.security;
+
+import com.ForoHub.AluraChallenge.model.Usuario;
+import com.ForoHub.AluraChallenge.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,17 +74,21 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/*@Service
+@Service
 public class AutenticacionService implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository repository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return repository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + email));
     }
+
 }*/
 
 // Este es el código que funcina, lo vamos a comentar

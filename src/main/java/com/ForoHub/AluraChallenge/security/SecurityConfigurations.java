@@ -21,8 +21,9 @@ public class SecurityConfigurations{
     @Autowired
     private SecurityFilter securityFilter;
 
+
     //Para no tener restricciones
-    @Bean
+    /*@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         // Desactivamos la protección CSRF, no es necesaria para APIs REST
         return httpSecurity.csrf(csrf -> csrf.disable())
@@ -32,7 +33,7 @@ public class SecurityConfigurations{
                         .anyRequest().permitAll()  // Permitir todas las demás solicitudes sin autenticación
                 )
                 .build();  // Construir la configuración de seguridad sin restricciones
-    }
+    }*/
 
     //Seguridad con tokens
     /*@Bean
@@ -47,6 +48,46 @@ public class SecurityConfigurations{
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }*/
+
+    //Código para probar la seguridad
+    /*@Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }*/
+
+    //Otra prueba, POST / login debe ser in autenticación
+    /*@Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()  // Asegúrate de que /login se permite sin autenticación
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        .anyRequest().authenticated())  // El resto de las rutas requieren autenticación
+                //.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }*/
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.POST,"/login").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .disable());
+
+        return http.build();
+    }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {

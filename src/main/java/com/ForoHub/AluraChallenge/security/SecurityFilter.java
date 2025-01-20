@@ -1,6 +1,7 @@
 package com.ForoHub.AluraChallenge.security;
 
 import com.ForoHub.AluraChallenge.model.Usuario;
+import com.ForoHub.AluraChallenge.repository.TopicsRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,10 +20,14 @@ import java.util.List;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
+    @Autowired
+    private UsuarioRepository repository;
+    @Autowired
+    private TokenService tokenService;
     //@Autowired
     //private TokenService tokenService;
 
-    @Override
+    /*@Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         /*String token = extractToken(request);
@@ -39,16 +44,37 @@ public class SecurityFilter extends OncePerRequestFilter {
                 SecurityContextHolder.clearContext();
             }
         }*/
+       /* filterChain.doFilter(request, response);
+    }*/
+
+    //Nuevo código para probar la seguridad
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        var authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            var token = authHeader.replace("Bearer ", "");
+            var nombreUsuario = tokenService.getSubject(token);
+            if (nombreUsuario != null) {
+                var usuario = repository.findByEmail(nombreUsuario).orElse(null);
+                if (usuario != null) {
+                var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+        }
         filterChain.doFilter(request, response);
     }
 
-    private String extractToken(HttpServletRequest request) {
+
+    //Código que vamos a quitar temporalmente
+    /*private String extractToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);  // Extrae el token
         }
         return null;
-    }
+    }*/
 }
 
 
