@@ -3,7 +3,6 @@ package com.ForoHub.AluraChallenge.model;
 import com.ForoHub.AluraChallenge.controller.service.datosRegistroTopic;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
@@ -34,7 +33,7 @@ public class Topic {
     // Requisito técnico para que Hibernate pueda trabajar en la persistencia y conversión de entidades
     public Topic(){}
 
-    //Constructor creado para registrar datos de los Topics
+    // Constructor creado para registrar datos de los Topics
     public Topic(datosRegistroTopic datosRegistroTopic) {
     }
 
@@ -47,7 +46,6 @@ public class Topic {
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
-
 
     public Topic(String titulo, String mensaje, LocalDateTime fechaCreacion, Usuario autor, Curso curso) {
         this.titulo = titulo;

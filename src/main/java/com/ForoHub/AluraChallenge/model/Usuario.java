@@ -37,7 +37,6 @@ public class Usuario implements UserDetails {
         return List.of(new SimpleGrantedAuthority("Role_USER"));
     }
 
-
     public Long getId() {
         return id;
     }

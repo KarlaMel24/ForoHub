@@ -9,8 +9,6 @@ import java.util.List;
 
 @Service
 public class TopicsService {
-    //@Autowired
-    //private Topic topic;
     @Autowired
     private TopicsRepository repository;
 

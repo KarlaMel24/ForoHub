@@ -4,7 +4,6 @@ import com.ForoHub.AluraChallenge.model.Usuario;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -53,34 +52,3 @@ public class TokenService {
         }
     }
 }
-
-    /*public String getSubject(String token) {
-        if (token == null) {
-            throw new RuntimeException("El token no puede ser nulo");
-        }
-        //Vamos a añadir temporalmente un null
-        DecodedJWT verifier = null;
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(apiSecret);  // Validando la firma
-            verifier = JWT.require(algorithm)
-                    .withIssuer("Foro HUB")
-                    .build()
-                    .verify(token);  // Verifica la validez del token
-            //Vamos a quitar temporalmente el return
-            /* return verifier.getSubject();  // Obtiene el 'subject' (usuario)
-        } catch (JWTVerificationException exception) {
-            throw new RuntimeException("Token inválido", exception);
-        }
-    }*/
-            /*verifier.getSubject();
-        } catch (JWTVerificationException exception) {
-            System.out.println(exception.toString());
-        }
-        if (verifier.getSubject() == null) {
-            throw new RuntimeException("Verifier invalido");
-        }
-        return verifier.getSubject();
-    }
-
-
-    }*/
